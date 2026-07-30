@@ -53,12 +53,18 @@ from dataclasses import dataclass
 #: of the download path, so it is pinned rather than discovered.
 CBIOS_VERSION = "0.29a"
 
+#: The directory the release sits in, which is **not** the release name.
+#: SourceForge files the point release `0.29a` under `0.29`, so deriving
+#: one from the other produces a 404 -- which is what it did, until an
+#: end-to-end install said so. Two constants, because they are two facts.
+CBIOS_DIR = "0.29"
+
 #: Measured 2026-07-30: this URL answers 200 and 269,374 bytes, after two
 #: redirects onto a mirror chosen per request. See `manifest.toml` for why
 #: that makes a wildcard host unavoidable.
 ARCHIVE_URL = (
     "https://sourceforge.net/projects/cbios/files/cbios/"
-    f"{CBIOS_VERSION}/cbios-{CBIOS_VERSION}.zip/download"
+    f"{CBIOS_DIR}/cbios-{CBIOS_VERSION}.zip/download"
 )
 ARCHIVE_FILENAME = f"cbios-{CBIOS_VERSION}.zip"
 ARCHIVE_BYTES = 269374
