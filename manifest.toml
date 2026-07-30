@@ -1,0 +1,56 @@
+[plugin]
+slug        = "c-bios"
+name        = "C-BIOS (MSX)"
+version     = "0.1.0"
+rpp_version = "1"
+license     = "MIT"
+
+[capabilities]
+firmware = "c_bios.firmware:Firmware"
+
+# Three hosts, and the third one is a wildcard for a reason that was
+# measured rather than assumed (2026-07-30, `curl -sSL -w %{url_effective}`
+# against the same URL twice):
+#
+#   sourceforge.net
+#       where the download starts. `/projects/cbios/files/.../download`
+#       answers 302.
+#
+#   downloads.sourceforge.net
+#       the second hop. Also a 302, and it is the one that picks a mirror.
+#
+#   *.dl.sourceforge.net
+#       where it *ends*, and the reason a fixed list cannot work here.
+#       SourceForge selects a mirror per request: two observations of the
+#       identical URL finished on `cfhcable.dl.sourceforge.net` and on
+#       `pilotfiber.dl.sourceforge.net`. There is no enumerable set to
+#       write down, so the wildcard is the honest declaration rather than
+#       a lazy one.
+#
+#       It is also as narrow as it can be. `netpolicy.url_allowed` treats
+#       a `*.` prefix as one or more leading labels and never the bare
+#       domain, so this grants `<mirror>.dl.sourceforge.net` and does not
+#       grant `sourceforge.net` or `evil-dl.sourceforge.net.example.com`.
+#       `archive-org` declares `*.archive.org` on the same basis.
+#
+# Nothing here is an API. This plugin issues no request at all to list its
+# catalogue, and the host makes exactly one GET per install.
+[permissions]
+network  = [
+    "sourceforge.net",
+    "downloads.sourceforge.net",
+    "*.dl.sourceforge.net",
+]
+romm_api = []
+
+[config]
+# Which regional build of the main BIOS ROM to install. C-BIOS ships four
+# of each: international (no suffix), and `_eu`, `_jp`, `_br`.
+#
+# The value becomes part of a **member name inside the archive**, so it is
+# checked against the table in `c_bios/catalogue.py` before it is used and
+# is never interpolated raw. The empty default is the international build,
+# which is the right answer unless you know you want otherwise -- the
+# regional builds differ in character set and keyboard layout, not in
+# whether they run.
+region = { type = "str", default = "" }
